@@ -39,6 +39,7 @@ namespace RepositoryWithCaching.WebApi.Controllers.v1
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, Customer customer)
         {
+            // Todo: Use mediatr
             if (id != customer.Id)
             {
                 return BadRequest();
@@ -50,6 +51,7 @@ namespace RepositoryWithCaching.WebApi.Controllers.v1
         [HttpPost]
         public async Task<ActionResult<Customer>> Post(Customer customer)
         {
+            // Todo: Use mediatr
             await _repository.AddAsync(customer);
             return CreatedAtAction("Get", new { id = customer.Id }, customer);
         }
@@ -57,6 +59,7 @@ namespace RepositoryWithCaching.WebApi.Controllers.v1
         [HttpDelete("{id}")]
         public async Task<ActionResult<Customer>> Delete(int id)
         {
+            // Todo: Use mediatr
             var customer = await _repository.GetByIdAsync(id);
             if (customer == null)
             {
