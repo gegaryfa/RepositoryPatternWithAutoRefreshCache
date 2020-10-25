@@ -41,3 +41,8 @@ down: ## Stop all running containers
 
 clean: ## Remove all running containers and volumes
 	docker-compose down --volumes --rmi all
+
+cleanall: ## Remove all running containers and volumes
+	docker-compose down --volumes --rmi all
+	docker system prune -a -f
+	docker volume prune -f

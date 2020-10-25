@@ -17,6 +17,7 @@ WORKDIR "/src/RepositoryWithCaching/RepositoryWithCaching.WebApi"
 RUN dotnet build "RepositoryWithCaching.WebApi.csproj" -c Release -o /app/build
 
 FROM build AS publish
+COPY ["RepositoryWithCaching/RepositoryWithCaching.Infrastructure.Persistence/data", "/app/publish/"]
 RUN dotnet publish "RepositoryWithCaching.WebApi.csproj" -c Release -o /app/publish
 
 FROM base AS final

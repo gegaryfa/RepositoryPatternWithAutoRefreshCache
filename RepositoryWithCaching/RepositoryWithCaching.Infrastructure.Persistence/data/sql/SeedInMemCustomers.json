@@ -7998,5 +7998,13 @@
     "email": "ngyverrr@canalblog.com",
     "Contact": "Male",
     "DateOfBirth": "9/23/2020"
+  },
+  {
+    "Id": 1001,
+    "FirstName": "Nicola",
+    "LastName": "Tesla",
+    "email": "nick@tesla.com",
+    "Contact": "Male",
+    "DateOfBirth": "9/23/2000"
   }
 ]
