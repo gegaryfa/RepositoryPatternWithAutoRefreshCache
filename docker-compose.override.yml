@@ -1,0 +1,26 @@
+version: '3.4'
+
+services:
+    customerdb:
+        container_name: customerdb
+        restart: always
+        ports:
+            - "1433:1433"
+        environment:
+            SA_PASSWORD: "P@ssw0rd"
+            ACCEPT_EULA: "Y"
+
+    repositorywithcaching.webapi:
+        container_name: repositorywithcachingapi
+        restart: on-failure  
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Development
+            - "ConnectionStrings:DefaultConnection=Data Source=customerdb,1433;Database=CustomersDb;User ID=sa;Password=P@ssw0rd"      #override the connection string from appSettings: point to the sql server container
+            - "UseInMemoryDatabase:false"
+        depends_on:
+            - customerdb
+        volumes:
+            - ${HOME}/.microsoft/usersecrets/:/root/.microsoft/usersecrets
+            - ${HOME}/.aspnet/https/:/root/.aspnet/https/
+        ports:
+            - "8000:80"

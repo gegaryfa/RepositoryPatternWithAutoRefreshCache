@@ -1,0 +1,11 @@
+version: '3.4'
+
+services:
+    customerdb:
+        image: mcr.microsoft.com/mssql/server
+
+    repositorywithcaching.webapi:
+        image: ${DOCKER_REGISTRY-}repositorywithcachingwebapi
+        build:
+            context: .
+            dockerfile: RepositoryWithCaching/RepositoryWithCaching.WebApi/Dockerfile
