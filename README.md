@@ -7,7 +7,7 @@
 ## Getting Started
 
 Clone the repo, open a terminal and run `make` to see all the possible actions.
-![makefile](https://github.com/gegaryfa/RepositoryPatternWithAutoRefreshCache/img/make.png)
+![makefile](img/make.PNG)
 
 ### Prerequisites
 
