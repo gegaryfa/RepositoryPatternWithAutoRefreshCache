@@ -25,15 +25,19 @@ namespace RepositoryWithCaching.Infrastructure.Shared
 
             // For Redis Caching
             services.AddTransient<RedisCacheService>();
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = config.GetConnectionString("Redis");
+            });
 
-            services.AddTransient<Func<CacheTech, ICacheService>>(serviceProvider => key =>
+            services.AddTransient<Func<CacheTechnology, ICacheService>>(serviceProvider => key =>
             {
                 switch (key)
                 {
-                    case CacheTech.Memory:
+                    case CacheTechnology.Memory:
                         return serviceProvider.GetService<MemoryCacheService>();
 
-                    case CacheTech.Redis:
+                    case CacheTechnology.Redis:
                         return serviceProvider.GetService<RedisCacheService>();
 
                     default:

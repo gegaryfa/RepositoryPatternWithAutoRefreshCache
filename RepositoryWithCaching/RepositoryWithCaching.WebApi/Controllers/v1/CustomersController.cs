@@ -2,19 +2,21 @@
 
 using Microsoft.AspNetCore.Mvc;
 
+using RepositoryWithCaching.Application.Features.Customers.Commands.CreateCustomer;
+using RepositoryWithCaching.Application.Features.Customers.Commands.DeleteCustomerById;
+using RepositoryWithCaching.Application.Features.Customers.Commands.UpdateCustomer;
 using RepositoryWithCaching.Application.Features.Customers.Queries.GetAllCustomers;
 using RepositoryWithCaching.Application.Features.Customers.Queries.GetCustomerById;
 using RepositoryWithCaching.Application.Interfaces.Repositories;
-using RepositoryWithCaching.Domain.Entities;
 
 namespace RepositoryWithCaching.WebApi.Controllers.v1
 {
     [ApiVersion("1.0")]
-    public class CustomerController : BaseApiController
+    public class CustomersController : BaseApiController
     {
         private readonly ICustomerRepository _repository;
 
-        public CustomerController(ICustomerRepository repository)
+        public CustomersController(ICustomerRepository repository)
         {
             this._repository = repository;
         }
@@ -26,7 +28,7 @@ namespace RepositoryWithCaching.WebApi.Controllers.v1
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Customer>> Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
             var customer = await Mediator.Send(new GetCustomerByIdQuery { Id = id });
             if (customer == null)
@@ -37,36 +39,25 @@ namespace RepositoryWithCaching.WebApi.Controllers.v1
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, Customer customer)
+        public async Task<IActionResult> Put(int id, UpdateCustomerCommand command)
         {
-            // Todo: Use mediatr
-            if (id != customer.Id)
+            if (id != command.Id)
             {
                 return BadRequest();
             }
-            await _repository.UpdateAsync(customer);
-            return NoContent();
+            return Ok(await Mediator.Send(command));
         }
 
         [HttpPost]
-        public async Task<ActionResult<Customer>> Post(Customer customer)
+        public async Task<IActionResult> Post(CreateCustomerCommand command)
         {
-            // Todo: Use mediatr
-            await _repository.AddAsync(customer);
-            return CreatedAtAction("Get", new { id = customer.Id }, customer);
+            return Ok(await Mediator.Send(command));
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Customer>> Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            // Todo: Use mediatr
-            var customer = await _repository.GetByIdAsync(id);
-            if (customer == null)
-            {
-                return NotFound();
-            }
-            await _repository.DeleteAsync(customer);
-            return customer;
+            return Ok(await Mediator.Send(new DeleteCustomerByIdCommand { Id = id }));
         }
     }
 }

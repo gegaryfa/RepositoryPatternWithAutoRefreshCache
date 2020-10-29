@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
 
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,8 @@ namespace RepositoryWithCaching.Infrastructure.Persistence.DataGenerators
 {
     public class DataGenerator
     {
+        private static bool InDocker => Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true";
+
         public static async Task InitializeInMemoryDb(IServiceProvider serviceProvider)
         {
             await using var context = new ApplicationDbContext(
@@ -67,9 +70,23 @@ namespace RepositoryWithCaching.Infrastructure.Persistence.DataGenerators
 
         private static IEnumerable<Customer> GetSeedCustomers(string filename)
         {
-            using var r = new StreamReader($"data/sql/{filename}.json");
+            var pathToFile = ConstructPathToFile(filename);
+
+            using var r = new StreamReader(pathToFile);
             var json = r.ReadToEnd();
             return JsonConvert.DeserializeObject<List<Customer>>(json);
+        }
+
+        private static string ConstructPathToFile(string filename)
+        {
+            if (InDocker)
+            {
+                return $"data/sql/{filename}.json";
+            }
+            var assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var filePathRelativeToAssembly = Path.Combine(assemblyPath, @$".\data/sql/{filename}.json");
+            var normalizedPath = Path.GetFullPath(filePathRelativeToAssembly);
+            return normalizedPath;
         }
     }
 }

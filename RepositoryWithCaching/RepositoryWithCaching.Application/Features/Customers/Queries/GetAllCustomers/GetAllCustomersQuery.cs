@@ -14,12 +14,12 @@ namespace RepositoryWithCaching.Application.Features.Customers.Queries.GetAllCus
     {
     }
 
-    public class GetAllProductsQueryHandler : IRequestHandler<GetAllCustomersQuery, IEnumerable<GetAllCustomersViewModel>>
+    public class GetAllCustomersQueryHandler : IRequestHandler<GetAllCustomersQuery, IEnumerable<GetAllCustomersViewModel>>
     {
         private readonly ICustomerRepository _customerRepository;
         private readonly IMapper _mapper;
 
-        public GetAllProductsQueryHandler(ICustomerRepository customerRepository, IMapper mapper)
+        public GetAllCustomersQueryHandler(ICustomerRepository customerRepository, IMapper mapper)
         {
             _customerRepository = customerRepository;
             _mapper = mapper;

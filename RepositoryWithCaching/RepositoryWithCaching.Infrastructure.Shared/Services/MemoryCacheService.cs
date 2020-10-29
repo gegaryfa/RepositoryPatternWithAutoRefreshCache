@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
@@ -29,20 +30,29 @@ namespace RepositoryWithCaching.Infrastructure.Shared.Services
             }
         }
 
-        public bool TryGet<T>(string cacheKey, out T value)
+        public async Task<T> Get<T>(string cacheKey, Func<Task<T>> factory)
         {
-            _memoryCache.TryGetValue(cacheKey, out value);
-            return value != null;
+            var cachedResult = _memoryCache.Get<T>(cacheKey);
+
+            if (cachedResult == null)
+            {
+                var result = await factory();
+                _memoryCache.Set(cacheKey, result);
+                return result;
+            }
+            return cachedResult;
         }
 
-        public T Set<T>(string cacheKey, T value)
+        public Task Set<T>(string cacheKey, T value)
         {
-            return _memoryCache.Set(cacheKey, value, _cacheOptions);
+            _memoryCache.Set(cacheKey, value, _cacheOptions);
+            return Task.CompletedTask;
         }
 
-        public void Remove(string cacheKey)
+        public Task Remove(string cacheKey)
         {
             _memoryCache.Remove(cacheKey);
+            return Task.CompletedTask;
         }
     }
 }

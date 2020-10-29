@@ -1,6 +1,6 @@
 ﻿namespace RepositoryWithCaching.Application.Enums
 {
-    public enum CacheTech
+    public enum CacheTechnology
     {
         Redis,
         Memory

@@ -8,6 +8,7 @@ using RepositoryWithCaching.Application;
 using RepositoryWithCaching.Infrastructure.Persistence;
 using RepositoryWithCaching.Infrastructure.Shared;
 using RepositoryWithCaching.WebApi.Extensions;
+using RepositoryWithCaching.WebApi.Middlewares;
 
 namespace RepositoryWithCaching.WebApi
 {
@@ -37,6 +38,8 @@ namespace RepositoryWithCaching.WebApi
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.ConfigureExceptionHandler();
 
             app.UseRouting();
 

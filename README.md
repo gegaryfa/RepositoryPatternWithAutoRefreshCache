@@ -9,6 +9,9 @@
 Clone the repo, open a terminal and run `make` to see all the possible actions.
 ![makefile](img/make.PNG)
 
+The project setup is based on Domain Driven Design:
+![makefile](img/DDD.png)
+
 ### Prerequisites
 
 * [`GNU Make`](https://www.gnu.org/software/make/)

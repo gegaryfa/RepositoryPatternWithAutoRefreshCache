@@ -13,11 +13,11 @@ namespace RepositoryWithCaching.Application.Features.Customers.Queries.GetCustom
         public int Id { get; set; }
     }
 
-    public class GetProductByIdQueryHandler : IRequestHandler<GetCustomerByIdQuery, Customer>
+    public class GetCustomerByIdQueryHandler : IRequestHandler<GetCustomerByIdQuery, Customer>
     {
         private readonly ICustomerRepository _customerRepository;
 
-        public GetProductByIdQueryHandler(ICustomerRepository customerRepository)
+        public GetCustomerByIdQueryHandler(ICustomerRepository customerRepository)
         {
             this._customerRepository = customerRepository;
         }

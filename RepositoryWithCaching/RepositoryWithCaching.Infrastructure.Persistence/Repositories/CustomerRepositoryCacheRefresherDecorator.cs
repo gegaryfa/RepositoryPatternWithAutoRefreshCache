@@ -14,20 +14,20 @@ using RepositoryWithCaching.Infrastructure.Persistence.Contexts;
 
 namespace RepositoryWithCaching.Infrastructure.Persistence.Repositories
 {
-    public class CustomerRefresherCacheDecorator : ICustomerRepository, ICacheRefresher
+    public class CustomerRepositoryCacheRefresherDecorator : ICustomerRepository, ICacheRefresher
     {
         private readonly ICustomerRepository _customerRepository;
 
-        private const CacheTech CacheTech = Application.Enums.CacheTech.Memory;
+        private const CacheTechnology CacheTech = Application.Enums.CacheTechnology.Memory;
         private readonly string _cacheKey = $"{typeof(CustomerRepository)}";
-        private readonly Func<CacheTech, ICacheService> _cacheService;
+        private readonly Func<CacheTechnology, ICacheService> _cacheService;
 
         private readonly ApplicationDbContext _dbContext;
 
-        public CustomerRefresherCacheDecorator(ICustomerRepository customerRepository, Func<CacheTech, ICacheService> cacheService, ApplicationDbContext dbContext)
+        public CustomerRepositoryCacheRefresherDecorator(ICustomerRepository customerRepository, Func<CacheTechnology, ICacheService> cacheService, ApplicationDbContext dbContext)
         {
             this._customerRepository = customerRepository;
-            _cacheService = cacheService;
+            this._cacheService = cacheService;
             this._dbContext = dbContext;
         }
 
@@ -44,11 +44,9 @@ namespace RepositoryWithCaching.Infrastructure.Persistence.Repositories
 
         public async Task<IReadOnlyList<Customer>> GetAllAsync()
         {
-            if (!_cacheService(CacheTech).TryGet(_cacheKey, out IReadOnlyList<Customer> cachedList))
-            {
-                cachedList = await this._customerRepository.GetAllAsync();
-                _cacheService(CacheTech).Set(_cacheKey, cachedList);
-            }
+            var cachedList = await _cacheService(CacheTech)
+                .Get(_cacheKey, async () => await this._customerRepository.GetAllAsync());
+
             return cachedList;
         }
 
@@ -74,9 +72,9 @@ namespace RepositoryWithCaching.Infrastructure.Persistence.Repositories
 
         public async Task RefreshCache()
         {
-            _cacheService(CacheTech).Remove(_cacheKey);
+            await _cacheService(CacheTech).Remove(_cacheKey);
             var cachedList = await _dbContext.Set<Customer>().ToListAsync();
-            _cacheService(CacheTech).Set(_cacheKey, cachedList);
+            await _cacheService(CacheTech).Set(_cacheKey, cachedList);
         }
     }
 }

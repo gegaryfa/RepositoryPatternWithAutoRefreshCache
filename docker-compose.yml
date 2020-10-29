@@ -4,6 +4,9 @@ services:
     customerdb:
         image: mcr.microsoft.com/mssql/server
 
+    cachedb:
+        image: redis
+
     repositorywithcaching.webapi:
         image: ${DOCKER_REGISTRY-}repositorywithcachingwebapi
         build:

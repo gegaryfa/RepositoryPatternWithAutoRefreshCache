@@ -10,15 +10,24 @@ services:
             SA_PASSWORD: "P@ssw0rd"
             ACCEPT_EULA: "Y"
 
+    cachedb:
+        container_name: cachedb
+        restart: always
+        ports:
+            - "6379:6379"
+
     repositorywithcaching.webapi:
         container_name: repositorywithcachingapi
         restart: on-failure  
         environment:
             - ASPNETCORE_ENVIRONMENT=Development
+            - DOTNET_RUNNING_IN_CONTAINER=true # Might be redundant snce most images have this predefined
             - "ConnectionStrings:DefaultConnection=Data Source=customerdb,1433;Database=CustomersDb;User ID=sa;Password=P@ssw0rd"      #override the connection string from appSettings: point to the sql server container
+            - "ConnectionStrings:Redis=cachedb:6379"      #override the connection string from appSettings: point to the redis container
             - "UseInMemoryDatabase:false"
         depends_on:
             - customerdb
+            - cachedb
         volumes:
             - ${HOME}/.microsoft/usersecrets/:/root/.microsoft/usersecrets
             - ${HOME}/.aspnet/https/:/root/.aspnet/https/

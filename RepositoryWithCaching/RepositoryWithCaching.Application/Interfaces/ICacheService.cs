@@ -1,11 +1,14 @@
-﻿namespace RepositoryWithCaching.Application.Interfaces
+﻿using System;
+using System.Threading.Tasks;
+
+namespace RepositoryWithCaching.Application.Interfaces
 {
     public interface ICacheService
     {
-        bool TryGet<T>(string cacheKey, out T value);
+        Task<T> Get<T>(string cacheKey, Func<Task<T>> factory);
 
-        T Set<T>(string cacheKey, T value);
+        Task Set<T>(string cacheKey, T value);
 
-        void Remove(string cacheKey);
+        Task Remove(string cacheKey);
     }
 }

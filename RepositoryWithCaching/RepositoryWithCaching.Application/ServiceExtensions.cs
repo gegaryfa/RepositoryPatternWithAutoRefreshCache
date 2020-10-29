@@ -18,7 +18,6 @@ namespace RepositoryWithCaching.Application
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddMediatR(Assembly.GetExecutingAssembly());
             services.Configure<CacheConfiguration>(x => config.GetSection("key").Bind(x));
-            //services.Configure<CacheConfiguration>(config.GetSection("CacheConfiguration"));
         }
     }
 }

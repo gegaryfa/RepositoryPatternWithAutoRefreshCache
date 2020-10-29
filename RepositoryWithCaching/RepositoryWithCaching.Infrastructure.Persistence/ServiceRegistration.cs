@@ -29,7 +29,7 @@ namespace RepositoryWithCaching.Infrastructure.Persistence
 
             services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddTransient<ICustomerRepository, CustomerRepository>();
-            services.Decorate<ICustomerRepository, CustomerRefresherCacheDecorator>();
+            services.Decorate<ICustomerRepository, CustomerRepositoryCacheRefresherDecorator>();
 
             #endregion Repositories
         }

@@ -4,5 +4,6 @@ namespace RepositoryWithCaching.Application.Features.Customers.Queries.GetAllCus
 {
     public class GetAllCustomersParameter : RequestParameter
     {
+        public string ToAddProp { get; set; }
     }
 }
