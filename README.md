@@ -29,9 +29,10 @@ make up
 ```
 After that you need to wait for the project to build and you are all set!
 The make command will run the docker-compose file and download all the images required for the porject. This will take some time so be patient ☕.
-When the `make up` command is finished, you should have 2 containers running:
+When the `make up` command is finished, you should have 3 containers running:
 - The web API @: http://localhost:8000/ 
 - A SQL server with some dummy data already seeded in a database.
+- A redis cache which is being used when you set redis as the cache provider.
 
 Alternatively, you can run the `RepositoryWithCaching.WebApi` project which will use In-memory(by default) data instead of a database on a sql server.
 
