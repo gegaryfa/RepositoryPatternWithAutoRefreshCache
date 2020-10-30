@@ -44,6 +44,9 @@ Alternatively, you can run the `RepositoryWithCaching.WebApi` project which will
 * [MediatR](https://github.com/jbogard/MediatR) - Simple mediator implementation in .NET.
 * [Swagger](https://swagger.io/) - Tools for documenting APIs.
 
+## Sources
+A good read on distributed caching for .Net Core: [Distributed caching in ASP.NET Core](https://docs.microsoft.com/en-us/aspnet/core/performance/caching/distributed?view=aspnetcore-3.1).
+
 
 ## Authors
 
