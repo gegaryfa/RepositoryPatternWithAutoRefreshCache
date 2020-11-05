@@ -1,5 +1,6 @@
 # Repository Pattern With Auto-Refresh Cache
 
+[![license](https://img.shields.io/github/license/gegaryfa/DockerComposeMakefile)](https://github.com/gegaryfa/DockerComposeMakefile/blob/master/LICENSE)
 ![GitHub stars](https://img.shields.io/github/stars/gegaryfa/RepositoryPatternWithAutoRefreshCache)
 
 .Net Core API - Repository pattern with auto refresh cache. This is a simple API using the repository design pattern to get data from a database. The data from the database are being cached either InMemory or in Redis(for scaled systems).

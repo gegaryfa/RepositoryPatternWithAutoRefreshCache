@@ -1,11 +1,16 @@
-# import config.
-cnf ?= config.env
-include $(cnf)
-export $(shell sed 's/=.*//' $(cnf))
+# default values
+DOCKER_COMPOSE_COMMAND ?= docker-compose
+DOCKER_COMPOSE_FILE ?= docker-compose.yml
+DOCKER_COMPOSE_OVERRIDE_FILE ?= docker-compose.override.yml
+
+# import config with custom values (if any)).
+customConfig ?= config.env
+include $(customConfig)
+export $(shell sed 's/=.*//' $(customConfig))
 
 # HELP
 # This will output the help for each task
-.PHONY: help
+.PHONY: help run up build rebuild restart debug logs ps status stop rm down clean cleanall
 
 help: ## This help.
 	@echo -e "\e[92m$(APP_NAME)"
@@ -14,34 +19,49 @@ help: ## This help.
 .DEFAULT_GOAL := help
 
 # Make TASKS
-# DOCKER TASKS
-run: ## Create and start containers
-	docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d
 
-up: run ## Build all containers and run - [docker-compose] (Alias to run)
+run: ## Start all container services or just s=<ServiceName> in background
+	$(DOCKER_COMPOSE_COMMAND) -f $(DOCKER_COMPOSE_FILE) -f $(DOCKER_COMPOSE_OVERRIDE_FILE) up -d $(s)
 
-# Build the container
-build: run ## Build all containers and run - [docker-compose]
+up: run ## Start all container services or just s=<ServiceName> in background (Alias to run)
 
-rebuild: ## Rebuild all containers and run - [docker-compose]
-	docker-compose -f docker-compose.yml -f docker-compose.override.yml up --force-recreate --build -d
+build: run ## Start all container services or just s=<ServiceName> in background (Alias to run)
 
-debug: ## Create and start containers in debug
-	docker-compose -f docker-compose.yml -f docker-compose.override.yml up --force-recreate --build
+rebuild: ## Rebuild and start all container services or just s=<ServiceName> in background
+	$(DOCKER_COMPOSE_COMMAND) -f $(DOCKER_COMPOSE_FILE) -f $(DOCKER_COMPOSE_OVERRIDE_FILE) up --force-recreate --build -d $(s)
 
-stop: ## Stop all running containers
-	docker-compose stop
+restart: ## Restart all container services or just s=<ServiceName> in background
+	$(DOCKER_COMPOSE_COMMAND) -f $(DOCKER_COMPOSE_FILE) stop $(s)
+	$(DOCKER_COMPOSE_COMMAND) -f $(DOCKER_COMPOSE_FILE) up $(s) -d
 
-rm: ## Remove all running containers
-	docker-compose rm
+debug: ## Create and start all or just s=<ServiceName> container services in debug [Recreates all containers to makes sure you debug the latest version].
+	$(DOCKER_COMPOSE_COMMAND) -f $(DOCKER_COMPOSE_FILE) -f $(DOCKER_COMPOSE_OVERRIDE_FILE) up --force-recreate --build $(s)
 
-down: ## Stop all running containers 
-	docker-compose down
+logs: ## Show logs for all or just s=<ServiceName> container services
+	$(DOCKER_COMPOSE_COMMAND) -f $(DOCKER_COMPOSE_FILE) logs --tail=100 -f $(s)
+
+ps: ## Show status of containers
+	@$(DOCKER_COMPOSE_COMMAND) -f $(DOCKER_COMPOSE_FILE) ps
+
+status: ps ## Show status of containers (Alias to ps)	
+
+stop: ## Stop all or just s=<ServiceName> container services
+	$(DOCKER_COMPOSE_COMMAND) stop $(s)
+
+rm: ## Remove all or just s=<ServiceName> container services
+	$(DOCKER_COMPOSE_COMMAND) rm $(s)
+
+down: ## Stop and remove all or s=<ServiceName> containers, networks, images, and volumes
+	$(DOCKER_COMPOSE_COMMAND) down $(s)
 
 clean: ## Remove all running containers and volumes
-	docker-compose down --volumes --rmi all
+	$(DOCKER_COMPOSE_COMMAND) down --volumes --rmi all
 
-cleanall: ## Remove all running containers, volumes. Also removes all unused images, unused volumes. Use with caution!!
-	docker-compose down --volumes --rmi all
+cleanall: confirmation ## Remove all running containers, volumes. Also removes all unused images, unused volumes. Use with caution!!
+	$(DOCKER_COMPOSE_COMMAND) down --volumes --rmi all
 	docker system prune -a -f
 	docker volume prune -f
+
+################################## Helpers ##############################
+confirmation:
+	@( read -p "Are you sure?!? [y/N]: " sure && case "$$sure" in [yY]) true;; *) false;; esac ) 
