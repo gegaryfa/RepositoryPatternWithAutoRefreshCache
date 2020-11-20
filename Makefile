@@ -12,7 +12,7 @@ export $(shell sed 's/=.*//' $(customConfig))
 # This will output the help for each task
 .PHONY: help run up build rebuild restart debug logs ps status stop rm down clean cleanall
 
-help: ## This help.
+help: ## Help
 	@echo -e "\e[92m$(APP_NAME)"
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
@@ -25,16 +25,20 @@ run: ## Start all container services or just s=<ServiceName> in background
 
 up: run ## Start all container services or just s=<ServiceName> in background (Alias to run)
 
-build: run ## Start all container services or just s=<ServiceName> in background (Alias to run)
+build:  ## Build but don't start all container services or just s=<ServiceName>
+	$(DOCKER_COMPOSE_COMMAND) -f $(DOCKER_COMPOSE_FILE) -f $(DOCKER_COMPOSE_OVERRIDE_FILE) build --parallel $(s)
 
-rebuild: ## Rebuild and start all container services or just s=<ServiceName> in background
+rebuild: ## Rebuild but don't start all container services or just s=<ServiceName>
+	$(DOCKER_COMPOSE_COMMAND) -f $(DOCKER_COMPOSE_FILE) -f $(DOCKER_COMPOSE_OVERRIDE_FILE) build --parallel --no-cache $(s)
+
+rerun: ## Rebuild and start all or container services or just s=<ServiceName> in background
 	$(DOCKER_COMPOSE_COMMAND) -f $(DOCKER_COMPOSE_FILE) -f $(DOCKER_COMPOSE_OVERRIDE_FILE) up --force-recreate --build -d $(s)
 
 restart: ## Restart all container services or just s=<ServiceName> in background
 	$(DOCKER_COMPOSE_COMMAND) -f $(DOCKER_COMPOSE_FILE) stop $(s)
 	$(DOCKER_COMPOSE_COMMAND) -f $(DOCKER_COMPOSE_FILE) up $(s) -d
 
-debug: ## Create and start all or just s=<ServiceName> container services in debug [Recreates all containers to makes sure you debug the latest version].
+debug: ## Create and start all or just s=<ServiceName> container services in debug [Recreates all containers to makes sure you debug the latest version]
 	$(DOCKER_COMPOSE_COMMAND) -f $(DOCKER_COMPOSE_FILE) -f $(DOCKER_COMPOSE_OVERRIDE_FILE) up --force-recreate --build $(s)
 
 logs: ## Show logs for all or just s=<ServiceName> container services
@@ -43,7 +47,13 @@ logs: ## Show logs for all or just s=<ServiceName> container services
 ps: ## Show status of containers
 	@$(DOCKER_COMPOSE_COMMAND) -f $(DOCKER_COMPOSE_FILE) ps
 
-status: ps ## Show status of containers (Alias to ps)	
+status: ps ## Show status of containers (Alias to ps)
+
+scale: ## Scale s=<ServiceName> to n=<NumberOfInstances>
+	$(DOCKER_COMPOSE_COMMAND) -f $(DOCKER_COMPOSE_FILE) up -d --no-recreate --scale $(s)=$(n)
+
+shell: ## Open a shell(bash) in the given container c=<ContainerName>
+	$(DOCKER_COMPOSE_COMMAND) -f $(DOCKER_COMPOSE_FILE) exec $(c) /bin/bash
 
 stop: ## Stop all or just s=<ServiceName> container services
 	$(DOCKER_COMPOSE_COMMAND) stop $(s)
@@ -64,4 +74,4 @@ cleanall: confirmation ## Remove all running containers, volumes. Also removes a
 
 ################################## Helpers ##############################
 confirmation:
-	@( read -p "Are you sure?!? [y/N]: " sure && case "$$sure" in [yY]) true;; *) false;; esac ) 
+	@( read -p "Are you sure?!? [y/N]: " sure && case "$$sure" in [yY]) true;; *) false;; esac )

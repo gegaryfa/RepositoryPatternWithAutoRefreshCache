@@ -16,7 +16,7 @@ The project setup is based on Domain Driven Design:
 ### Prerequisites
 
 * [`GNU Make`](https://www.gnu.org/software/make/)
-* [`.Net Core v3.1`](https://dotnet.microsoft.com/download/dotnet-core/3.1)
+* [`.Net Core v5.0`](https://dotnet.microsoft.com/download/dotnet-core/5.0)
 * [`Docker`](https://www.docker.com/get-started)
 * Your favorite IDE/editor
 
@@ -39,7 +39,7 @@ Alternatively, you can run the `RepositoryWithCaching.WebApi` project which will
 
 ## Built With
 
-* [.Net Core v3.1](https://dotnet.microsoft.com/download/dotnet-core/3.1)
+* [.Net Core v5.0](https://dotnet.microsoft.com/download/dotnet-core/5.0)
 * [AutoMapper](https://automapper.org/) - A convention-based objet-objet mapper.
 * [Hangfire](https://hangfire.io/) - Easy and reliable library to perform fire-and-forget tasks.
 * [MediatR](https://github.com/jbogard/MediatR) - Simple mediator implementation in .NET.
